@@ -1,0 +1,2 @@
+curl -H 'Accept: application/xml' -H 'Content-Type: application/xml' \                                                                <rvm ruby-1.9.2-p180> 
+  -u 05843cba04869e814b758270cc28ccefca09ea9d:X   'https://annosum.basecamphq.com/todo_lists.xml?responsible_party=6606027' | grep -G content
