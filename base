@@ -1,2 +1,16 @@
-curl -H 'Accept: application/xml' -H 'Content-Type: application/xml' \                                                                <rvm ruby-1.9.2-p180> 
-  -u 05843cba04869e814b758270cc28ccefca09ea9d:X   'https://annosum.basecamphq.com/todo_lists.xml?responsible_party=6606027' | grep -G content
+#!/usr/bin/env bash
+
+# curl -H 'Accept: application/xml' -H 'Content-Type: application/xml' -u 05843cba04869e814b758270cc28ccefca09ea9d:X 'https://annosum.basecamphq.com/todo_lists.xml?responsible_party=6606027' | grep -G content
+
+Fluff="-H 'Accept: application/xml' -H 'Content-Type: application/xml'"
+API_token="-u 05843cba04869e814b758270cc28ccefca09ea9d:X"
+
+Project="annosum"
+Site="https://$Project.basecamphq.com"
+Todo="todo_lists.xml?responsible_party=6606027"
+
+echo "My Basecamp TODOs:"
+curl 2>/dev/null "$Fluff" $API_token "$Site/$Todo" | 
+	grep -G content | 
+	sed -e 's/<[^>]*>//g' -e 's/\&amp\;/\&/g' -e 's/^[\ \t]*//' | 
+	nl
