@@ -1,16 +1,46 @@
 #!/usr/bin/env bash
 
+# NOTE api exapmle from website
 # curl -H 'Accept: application/xml' -H 'Content-Type: application/xml' -u 05843cba04869e814b758270cc28ccefca09ea9d:X 'https://annosum.basecamphq.com/todo_lists.xml?responsible_party=6606027' | grep -G content
 
-Fluff="-H 'Accept: application/xml' -H 'Content-Type: application/xml'"
+# basic HTTP authentication no password
 API_token="-u 05843cba04869e814b758270cc28ccefca09ea9d:X"
+# account name
+Account="annosum"
+# user id
+User=6606027
 
-Project="annosum"
-Site="https://$Project.basecamphq.com"
-Todo="todo_lists.xml?responsible_party=6606027"
+Site="https://$Account.basecamphq.com"
 
-echo "My Basecamp TODOs:"
-curl 2>/dev/null "$Fluff" $API_token "$Site/$Todo" | 
-	grep -G content | 
-	sed -e 's/<[^>]*>//g' -e 's/\&amp\;/\&/g' -e 's/^[\ \t]*//' | 
-	nl
+usage() {
+cat << EOF
+usage: $0 [-(h,p)]
+
+Basecamp REST API commandline interface
+EOF
+}
+
+while getopts “hp:” OPTION; do
+     case $OPTION in
+         h)
+             usage
+             exit 1
+             ;;
+         p)
+             PASSWD=$OPTARG
+             ;;
+         ?)
+             usage
+             exit
+             ;;
+     esac
+done
+
+#if [[ $1 == "lists" ]]; then
+	Query="todo_lists.xml?responsible_party=$User"
+	QueryKey=content
+#fi
+
+curl 2>/dev/null GET $API_token "$Site/$Query" |
+	grep -G -e '<name\|content\|<id type' |
+	sed -e 's/<[^>]*>//g' -e 's/\&amp\;/\&/g' -e 's/\&quot\;/"/g'
